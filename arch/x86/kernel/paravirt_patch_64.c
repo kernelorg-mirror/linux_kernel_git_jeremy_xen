@@ -11,6 +11,10 @@ DEF_NATIVE(pv_mmu_ops, read_cr2, "movq %cr2, %rax");
 DEF_NATIVE(pv_mmu_ops, read_cr3, "movq %cr3, %rax");
 DEF_NATIVE(pv_mmu_ops, write_cr3, "movq %rdi, %cr3");
 DEF_NATIVE(pv_mmu_ops, flush_tlb_single, "invlpg (%rdi)");
+DEF_NATIVE(pv_mmu_ops, set_pte, "movq %rsi, (%rdi)");
+DEF_NATIVE(pv_mmu_ops, set_pte_at, "movq %rcx, (%rdx)");
+DEF_NATIVE(pv_mmu_ops, ptep_modify_prot_start, "xorq %rax, %rax; xchg %rax, (%rdx)"); 
+DEF_NATIVE(pv_mmu_ops, ptep_modify_prot_commit, "movq %rcx, (%rdx)");
 DEF_NATIVE(pv_cpu_ops, clts, "clts");
 DEF_NATIVE(pv_cpu_ops, wbinvd, "wbinvd");
 
@@ -61,6 +65,10 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
 		PATCH_SITE(pv_cpu_ops, clts);
 		PATCH_SITE(pv_mmu_ops, flush_tlb_single);
 		PATCH_SITE(pv_cpu_ops, wbinvd);
+		PATCH_SITE(pv_mmu_ops, set_pte);
+		PATCH_SITE(pv_mmu_ops, set_pte_at);
+		PATCH_SITE(pv_mmu_ops, ptep_modify_prot_start);
+		PATCH_SITE(pv_mmu_ops, ptep_modify_prot_commit);
 
 	patch_site:
 		ret = paravirt_patch_insns(ibuf, len, start, end);
