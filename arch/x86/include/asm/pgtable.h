@@ -323,7 +323,7 @@ static inline pmd_t pfn_pmd(unsigned long page_nr, pgprot_t pgprot)
 
 static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
 {
-	pteval_t val = pte_val(pte);
+	pteval_t val = native_pte_val(pte);
 
 	/*
 	 * Chop off the NX bit (if present), and add the NX portion of
@@ -332,7 +332,7 @@ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
 	val &= _PAGE_CHG_MASK;
 	val |= massage_pgprot(newprot) & ~_PAGE_CHG_MASK;
 
-	return __pte(val);
+	return native_make_pte(val);
 }
 
 static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
