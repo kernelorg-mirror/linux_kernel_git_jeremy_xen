@@ -11,6 +11,15 @@ DEF_NATIVE(pv_mmu_ops, write_cr3, "mov %eax, %cr3");
 DEF_NATIVE(pv_mmu_ops, read_cr3, "mov %cr3, %eax");
 DEF_NATIVE(pv_cpu_ops, clts, "clts");
 DEF_NATIVE(pv_cpu_ops, read_tsc, "rdtsc");
+#if PAGETABLE_LEVELS < 3
+DEF_NATIVE(pv_mmu_ops, set_pte, "mov %edx, (%eax)");
+DEF_NATIVE(pv_mmu_ops, set_pte_at, "mov %eax, (%ecx)");
+DEF_NATIVE(pv_mmu_ops, ptep_modify_prot_start, "xor %eax, %eax; xchg %eax, (%ecx)");
+DEF_NATIVE(pv_mmu_ops, ptep_modify_prot_commit, "mov %eax, (%ecx)");
+#else
+DEF_NATIVE(pv_mmu_ops, set_pte, "mov %ecx,0x4(%eax); mov %edx,(%eax)");
+DEF_NATIVE(pv_mmu_ops, ptep_modify_prot_start, "xor %eax, %eax; xchg %eax, (%ecx); mov 4(%ecx), %edx");
+#endif
 
 unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len)
 {
@@ -47,6 +56,12 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
 		PATCH_SITE(pv_mmu_ops, write_cr3);
 		PATCH_SITE(pv_cpu_ops, clts);
 		PATCH_SITE(pv_cpu_ops, read_tsc);
+		PATCH_SITE(pv_mmu_ops, set_pte);
+		PATCH_SITE(pv_mmu_ops, ptep_modify_prot_start);
+#if PAGETABLE_LEVELS < 2
+		PATCH_SITE(pv_mmu_ops, set_pte_at);
+		PATCH_SITE(pv_mmu_ops, ptep_modify_prot_commit);
+#endif
 
 	patch_site:
 		ret = paravirt_patch_insns(ibuf, len, start, end);
