@@ -122,6 +122,7 @@ struct cpuidle_driver {
 };
 
 #ifdef CONFIG_CPU_IDLE
+extern int cpuidle_disabled(void);
 extern void disable_cpuidle(void);
 extern int cpuidle_idle_call(void);
 
@@ -137,6 +138,7 @@ extern int cpuidle_enable_device(struct cpuidle_device *dev);
 extern void cpuidle_disable_device(struct cpuidle_device *dev);
 
 #else
+static inline int cpuidle_disabled(void) { return 1; }
 static inline void disable_cpuidle(void) { }
 static inline int cpuidle_idle_call(void) { return -ENODEV; }
 
