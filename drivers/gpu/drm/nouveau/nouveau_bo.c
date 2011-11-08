@@ -1064,7 +1064,7 @@ nouveau_ttm_tt_populate(struct ttm_tt *ttm)
 	dev = dev_priv->dev;
 
 #ifdef CONFIG_SWIOTLB
-	if ((dma_get_mask(dev->dev) <= DMA_BIT_MASK(32)) && swiotlb_nr_tbl()) {
+	if (((dma_get_mask(dev->dev) <= DMA_BIT_MASK(32)) && swiotlb_nr_tbl()) || nouveau_ttm_dma) {
 		return ttm_dma_populate(ttm, dev->dev);
 	}
 #endif
@@ -1102,7 +1102,7 @@ nouveau_ttm_tt_unpopulate(struct ttm_tt *ttm)
 	dev = dev_priv->dev;
 
 #ifdef CONFIG_SWIOTLB
-	if ((dma_get_mask(dev->dev) <= DMA_BIT_MASK(32)) && swiotlb_nr_tbl()) {
+	if (((dma_get_mask(dev->dev) <= DMA_BIT_MASK(32)) && swiotlb_nr_tbl()) || nouveau_ttm_dma) {
 		ttm_dma_unpopulate(ttm, dev->dev);
 		return;
 	}
