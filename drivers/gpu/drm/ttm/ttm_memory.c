@@ -258,6 +258,7 @@ int ttm_mem_global_init(struct ttm_mem_global *glob)
 	glob->swap_limit = glob->max_mem - (glob->mem >> 3);
 	glob->swap_dma32_limit = ((1ULL << 32) >> 1) - (((1ULL << 32) >> 3));
 	ttm_page_alloc_init(glob, glob->max_mem/(2*PAGE_SIZE));
+	ttm_dma_page_alloc_init(glob, glob->max_mem/(2*PAGE_SIZE));
 	return 0;
 }
 EXPORT_SYMBOL(ttm_mem_global_init);
@@ -266,6 +267,7 @@ void ttm_mem_global_release(struct ttm_mem_global *glob)
 {
 	/* let the page allocator first stop the shrink work. */
 	ttm_page_alloc_fini();
+	ttm_dma_page_alloc_fini();
 
 	flush_workqueue(glob->swap_queue);
 	destroy_workqueue(glob->swap_queue);
