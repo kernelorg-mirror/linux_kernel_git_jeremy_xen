@@ -31,6 +31,7 @@
 #include <linux/pci.h>
 #include <linux/gfp.h>
 #include <linux/memblock.h>
+#include <linux/cpuidle.h>
 
 #include <xen/xen.h>
 #include <xen/interface/xen.h>
