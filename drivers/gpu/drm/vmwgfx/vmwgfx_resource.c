@@ -430,7 +430,7 @@ int vmw_context_define_ioctl(struct drm_device *dev, void *data,
 
 	ret = ttm_mem_global_alloc(vmw_mem_glob(dev_priv),
 				   vmw_user_context_size,
-				   false, true);
+				   false);
 	if (unlikely(ret != 0)) {
 		if (ret != -ERESTARTSYS)
 			DRM_ERROR("Out of graphics memory for context"
@@ -1298,7 +1298,7 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
 		return ret;
 
 	ret = ttm_mem_global_alloc(vmw_mem_glob(dev_priv),
-				   size, false, true);
+				   size, false);
 	if (unlikely(ret != 0)) {
 		if (ret != -ERESTARTSYS)
 			DRM_ERROR("Out of graphics memory for surface"
@@ -1560,7 +1560,7 @@ int vmw_dmabuf_init(struct vmw_private *dev_priv,
 	    vmw_dmabuf_acc_size(bdev->glob,
 				(size + PAGE_SIZE - 1) >> PAGE_SHIFT);
 
-	ret = ttm_mem_global_alloc(mem_glob, acc_size, false, false);
+	ret = ttm_mem_global_alloc(mem_glob, acc_size, false);
 	if (unlikely(ret != 0)) {
 		/* we must free the bo here as
 		 * ttm_buffer_object_init does so as well */
@@ -1851,7 +1851,7 @@ int vmw_stream_claim_ioctl(struct drm_device *dev, void *data,
 
 	ret = ttm_mem_global_alloc(vmw_mem_glob(dev_priv),
 				   vmw_user_stream_size,
-				   false, true);
+				   false);
 	if (unlikely(ret != 0)) {
 		if (ret != -ERESTARTSYS)
 			DRM_ERROR("Out of graphics memory for stream"

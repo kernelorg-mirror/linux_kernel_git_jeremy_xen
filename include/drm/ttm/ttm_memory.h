@@ -81,14 +81,13 @@ struct ttm_mem_global {
 	struct work_struct work;
 	wait_queue_head_t queue;
 	spinlock_t lock;
-	struct ttm_mem_zone *zones[TTM_MEM_MAX_ZONES];
-	unsigned int num_zones;
-	struct ttm_mem_zone *zone_kernel;
-#ifdef CONFIG_HIGHMEM
-	struct ttm_mem_zone *zone_highmem;
-#else
-	struct ttm_mem_zone *zone_dma32;
-#endif
+	unsigned long mem;
+	unsigned long max_mem;
+	unsigned long emer_mem;
+	unsigned long used_mem;
+	unsigned long used_dma32_mem;
+	unsigned long swap_limit;
+	unsigned long swap_dma32_limit;
 };
 
 /**
@@ -146,14 +145,19 @@ static inline void ttm_mem_unregister_shrink(struct ttm_mem_global *glob,
 
 extern int ttm_mem_global_init(struct ttm_mem_global *glob);
 extern void ttm_mem_global_release(struct ttm_mem_global *glob);
-extern int ttm_mem_global_alloc(struct ttm_mem_global *glob, uint64_t memory,
-				bool no_wait, bool interruptible);
+extern int ttm_mem_global_alloc(struct ttm_mem_global *glob,
+				uint64_t memory,
+				bool no_wait);
 extern void ttm_mem_global_free(struct ttm_mem_global *glob,
 				uint64_t amount);
-extern int ttm_mem_global_alloc_page(struct ttm_mem_global *glob,
-				     struct page *page,
-				     bool no_wait, bool interruptible);
-extern void ttm_mem_global_free_page(struct ttm_mem_global *glob,
-				     struct page *page);
+extern int ttm_mem_global_alloc_pages(struct ttm_mem_global *glob,
+				      unsigned npages,
+				      bool no_wait);
+extern void ttm_mem_global_free_pages(struct ttm_mem_global *glob,
+				      struct page **pages, unsigned npages);
+extern void ttm_mem_global_account_pages(struct ttm_mem_global *glob,
+					 struct page **pages,
+					 unsigned npages);
 extern size_t ttm_round_pot(size_t size);
+
 #endif

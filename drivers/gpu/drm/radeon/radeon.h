@@ -95,6 +95,7 @@ extern int radeon_hw_i2c;
 extern int radeon_pcie_gen2;
 extern int radeon_msi;
 
+extern int radeon_ttm_dma;
 /*
  * Copy from radeon_drv.h so we don't have to include both and have conflicting
  * symbol;
@@ -320,7 +321,6 @@ struct radeon_gart {
 	unsigned			table_size;
 	struct page			**pages;
 	dma_addr_t			*pages_addr;
-	bool				*ttm_alloced;
 	bool				ready;
 };
 
