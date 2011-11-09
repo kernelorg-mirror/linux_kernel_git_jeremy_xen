@@ -326,32 +326,45 @@ int ttm_mem_global_alloc(struct ttm_mem_global *glob,
 }
 EXPORT_SYMBOL(ttm_mem_global_alloc);
 
-int ttm_mem_global_alloc_page(struct ttm_mem_global *glob,
-			      struct page *page,
-			      bool no_wait)
+int ttm_mem_global_alloc_pages(struct ttm_mem_global *glob,
+			       unsigned npages,
+			       bool no_wait)
 {
-
-	if (ttm_mem_global_alloc(glob, PAGE_SIZE, no_wait))
+	if (ttm_mem_global_alloc(glob, PAGE_SIZE * npages, no_wait))
 		return -ENOMEM;
-
-	/* check if page is dma32 */
-	if (page_to_pfn(page) > 0x00100000UL) {
-		spin_lock(&glob->lock);
-		glob->used_mem -= PAGE_SIZE;
-		glob->used_dma32_mem += PAGE_SIZE;
-		spin_unlock(&glob->lock);
-	}
 	ttm_check_swapping(glob);
 	return 0;
 }
 
-void ttm_mem_global_free_page(struct ttm_mem_global *glob, struct page *page)
+void ttm_mem_global_account_pages(struct ttm_mem_global *glob,
+				  struct page **pages,
+				  unsigned npages)
 {
+	unsigned i;
+
+	/* check if page is dma32 */
 	spin_lock(&glob->lock);
-	if (page_to_pfn(page) > 0x00100000UL) {
-		glob->used_dma32_mem -= PAGE_SIZE;
-	} else {
-		glob->used_mem -= PAGE_SIZE;
+	for (i = 0; i < npages; i++) {
+		if (page_to_pfn(pages[i]) > 0x00100000UL) {
+			glob->used_mem -= PAGE_SIZE;
+			glob->used_dma32_mem += PAGE_SIZE;
+		}
+	}
+	spin_unlock(&glob->lock);
+}
+
+void ttm_mem_global_free_pages(struct ttm_mem_global *glob,
+			       struct page **pages, unsigned npages)
+{
+	unsigned i;
+
+	spin_lock(&glob->lock);
+	for (i = 0; i < npages; i++) {
+		if (page_to_pfn(pages[i]) > 0x00100000UL) {
+			glob->used_dma32_mem -= PAGE_SIZE;
+		} else {
+			glob->used_mem -= PAGE_SIZE;
+		}
 	}
 	spin_unlock(&glob->lock);
 }
