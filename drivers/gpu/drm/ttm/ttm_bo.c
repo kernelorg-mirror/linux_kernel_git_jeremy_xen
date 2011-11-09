@@ -1252,7 +1252,7 @@ int ttm_bo_create(struct ttm_bo_device *bdev,
 
 	size_t acc_size =
 	    ttm_bo_size(bdev->glob, (size + PAGE_SIZE - 1) >> PAGE_SHIFT);
-	ret = ttm_mem_global_alloc(mem_glob, acc_size, false, false);
+	ret = ttm_mem_global_alloc(mem_glob, acc_size, false);
 	if (unlikely(ret != 0))
 		return ret;
 

@@ -267,8 +267,7 @@ int ttm_ref_object_add(struct ttm_object_file *tfile,
 		}
 
 		read_unlock(&tfile->lock);
-		ret = ttm_mem_global_alloc(mem_glob, sizeof(*ref),
-					   false, false);
+		ret = ttm_mem_global_alloc(mem_glob, sizeof(*ref), false);
 		if (unlikely(ret != 0))
 			return ret;
 		ref = kmalloc(sizeof(*ref), GFP_KERNEL);

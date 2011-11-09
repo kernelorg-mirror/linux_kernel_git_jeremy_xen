@@ -82,7 +82,7 @@ static struct page *__ttm_tt_get_page(struct ttm_tt *ttm, int index)
 
 		p = list_first_entry(&h, struct page, lru);
 
-		ret = ttm_mem_global_alloc_page(mem_glob, p, false, false);
+		ret = ttm_mem_global_alloc_page(mem_glob, p, false);
 		if (unlikely(ret != 0))
 			goto out_err;
 
