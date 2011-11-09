@@ -14,6 +14,7 @@
 #include <linux/utsname.h>
 #include <trace/events/power.h>
 #include <linux/hw_breakpoint.h>
+#include <linux/cpuidle.h>
 #include <asm/cpu.h>
 #include <asm/system.h>
 #include <asm/apic.h>
@@ -587,6 +588,10 @@ void __cpuinit select_idle_routine(const struct cpuinfo_x86 *c)
 	if (pm_idle)
 		return;
 
+	if (cpuidle_disabled()) {
+		pm_idle = default_idle;
+		return;
+	}
 	if (cpu_has(c, X86_FEATURE_MWAIT) && mwait_usable(c)) {
 		/*
 		 * One CPU supports mwait => All CPUs supports mwait
