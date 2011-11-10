@@ -503,8 +503,7 @@ int vmw_fence_create(struct vmw_fence_manager *fman,
 	struct vmw_fence_obj *fence;
 	int ret;
 
-	ret = ttm_mem_global_alloc(mem_glob, fman->fence_size,
-				   false, false);
+	ret = ttm_mem_global_alloc(mem_glob, fman->fence_size, false);
 	if (unlikely(ret != 0))
 		return ret;
 
@@ -573,8 +572,7 @@ int vmw_user_fence_create(struct drm_file *file_priv,
 	 * be created by a user-space request.
 	 */
 
-	ret = ttm_mem_global_alloc(mem_glob, fman->user_fence_size,
-				   false, false);
+	ret = ttm_mem_global_alloc(mem_glob, fman->user_fence_size, false);
 	if (unlikely(ret != 0))
 		return ret;
 
@@ -966,7 +964,7 @@ int vmw_event_fence_action_create(struct drm_file *file_priv,
 	 * event size itself.
 	 */
 
-	ret = ttm_mem_global_alloc(mem_glob, size, false, interruptible);
+	ret = ttm_mem_global_alloc(mem_glob, size, false);
 	if (unlikely(ret != 0))
 		return ret;
 

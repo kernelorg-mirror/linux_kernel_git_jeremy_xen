@@ -37,6 +37,10 @@
 
 #include "drm_pciids.h"
 
+MODULE_PARM_DESC(ttm_dma, "Enable TTM DMA mode irregardless if DMA32 is set");
+int nouveau_ttm_dma;
+module_param_named(ttm_dma, nouveau_ttm_dma, int, 0444);
+
 MODULE_PARM_DESC(agpmode, "AGP mode (0 to disable AGP)");
 int nouveau_agpmode = -1;
 module_param_named(agpmode, nouveau_agpmode, int, 0400);
