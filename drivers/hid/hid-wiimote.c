@@ -136,7 +136,8 @@ static __u16 wiiproto_keymap[] = {
 };
 
 static enum power_supply_property wiimote_battery_props[] = {
-	POWER_SUPPLY_PROP_CAPACITY
+	POWER_SUPPLY_PROP_CAPACITY,
+	POWER_SUPPLY_PROP_SCOPE,
 };
 
 /* requires the state.lock spinlock to be held */
@@ -467,6 +468,11 @@ static int wiimote_battery_get_property(struct power_supply *psy,
 						struct wiimote_data, battery);
 	int ret = 0, state;
 	unsigned long flags;
+
+	if (psp == POWER_SUPPLY_PROP_SCOPE) {
+		val->intval = POWER_SUPPLY_SCOPE_DEVICE;
+		return 0;
+	}
 
 	ret = wiimote_cmd_acquire(wdata);
 	if (ret)
@@ -1256,6 +1262,8 @@ static int wiimote_hid_probe(struct hid_device *hdev,
 	wdata->battery.name = "wiimote_battery";
 	wdata->battery.type = POWER_SUPPLY_TYPE_BATTERY;
 	wdata->battery.use_for_apm = 0;
+
+	power_supply_powers(&wdata->battery, &hdev->dev);
 
 	ret = power_supply_register(&wdata->hdev->dev, &wdata->battery);
 	if (ret) {
